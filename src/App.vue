@@ -1,6 +1,9 @@
 <script setup>
 import { ref, onMounted } from 'vue';
-
+const BASE_URL = process.env.NODE_ENV === "development"
+    ? `http://127.0.0.1:8787`
+    : `https://evcard-sign-api.humiao2006.workers.dev`;
+console.log("BASE_URL: ", BASE_URL )
 // State
 const tokens = ref([]);
 const newToken = ref({ account_name: '', token: '' });
@@ -11,7 +14,7 @@ const editingToken = ref(null); // Holds the token being edited
 // Fetch all tokens from the API
 const fetchTokens = async () => {
   try {
-    const response = await fetch('/api/tokens');
+    const response = await fetch(BASE_URL + '/api/tokens');
     if (!response.ok) throw new Error('Failed to fetch tokens');
     tokens.value = await response.json();
   } catch (error) {
@@ -27,7 +30,7 @@ const addToken = async () => {
     return;
   }
   try {
-    const response = await fetch('/api/tokens', {
+    const response = await fetch(BASE_URL + '/api/tokens', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newToken.value),
@@ -44,7 +47,7 @@ const addToken = async () => {
 // Update an existing token
 const updateToken = async (tokenToUpdate) => {
   try {
-    const response = await fetch(`/api/tokens/${tokenToUpdate.id}`,
+    const response = await fetch(BASE_URL + `/api/tokens/${tokenToUpdate.id}`,
       {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -67,7 +70,7 @@ const updateToken = async (tokenToUpdate) => {
 const deleteToken = async (id) => {
   if (!confirm('Are you sure you want to delete this token?')) return;
   try {
-    const response = await fetch(`/api/tokens/${id}`, { method: 'DELETE' });
+    const response = await fetch(BASE_URL + `/api/tokens/${id}`, { method: 'DELETE' });
     if (!response.ok) throw new Error('Failed to delete token');
     await fetchTokens(); // Refresh list
   } catch (error) {
@@ -87,7 +90,7 @@ const startEditing = (token) => {
 // Manually trigger a sign-in for a token
 const manualSignIn = async (id) => {
   try {
-    const response = await fetch(`/api/tokens/${id}/signin`, { method: 'POST' });
+    const response = await fetch(BASE_URL + `/api/tokens/${id}/signin`, { method: 'POST' });
     const result = await response.json();
 
     if (!response.ok) {
