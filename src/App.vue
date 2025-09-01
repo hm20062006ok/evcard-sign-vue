@@ -48,14 +48,14 @@ const addToken = async () => {
 const updateToken = async (tokenToUpdate) => {
   try {
     const response = await fetch(BASE_URL + `/api/tokens/${tokenToUpdate.id}`,
-      {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          account_name: tokenToUpdate.account_name, 
-          token: tokenToUpdate.token 
-        }),
-      }
+        {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            account_name: tokenToUpdate.account_name,
+            token: tokenToUpdate.token
+          }),
+        }
     );
     if (!response.ok) throw new Error('Failed to update token');
     editingToken.value = null; // Exit editing mode
@@ -129,15 +129,15 @@ onMounted(() => {
       <div class="form-container add-form">
         <h2>Add New Token</h2>
         <form @submit.prevent="addToken">
-          <input 
-            v-model="newToken.account_name" 
-            placeholder="Account Name" 
-            required
+          <input
+              v-model="newToken.account_name"
+              placeholder="Account Name"
+              required
           />
           <input
-            v-model="newToken.token" 
-            placeholder="Token"
-            required
+              v-model="newToken.token"
+              placeholder="Token"
+              required
           />
           <button type="submit">Add Token</button>
         </form>
@@ -148,43 +148,43 @@ onMounted(() => {
         <h2>Existing Tokens</h2>
         <table>
           <thead>
-            <tr>
-              <th>ID</th>
-              <th>Account Name</th>
-              <th>Token</th>
-              <th>Next Execution</th>
-              <th>Actions</th>
-            </tr>
+          <tr>
+            <th>ID</th>
+            <th>Account Name</th>
+            <th>Token</th>
+            <th>Next Execution</th>
+            <th>Actions</th>
+          </tr>
           </thead>
           <tbody>
-            <tr v-for="token in tokens" :key="token.id">
-              <!-- Viewing Mode -->
-              <template v-if="!editingToken || editingToken.id !== token.id">
-                <td>{{ token.id }}</td>
-                <td>{{ token.account_name }}</td>
-                <td class="token-cell" :title="token.token">{{ token.token }}</td>
-                <td>{{ new Date(token.next_execution_time).toLocaleString() }}</td>
-                <td class="actions">
-                  <button @click="startEditing(token)" class="edit-btn">Edit</button>
-                  <button @click="manualSignIn(token.id)" class="signin-btn">Sign-in</button>
-                  <button @click="deleteToken(token.id)" class="delete-btn">Delete</button>
-                </td>
-              </template>
-              <!-- Editing Mode -->
-              <template v-else>
-                <td>{{ editingToken.id }}</td>
-                <td><input v-model="editingToken.account_name" /></td>
-                <td><input v-model="editingToken.token" /></td>
-                <td>{{ new Date(token.next_execution_time).toLocaleString() }}</td>
-                <td class="actions">
-                  <button @click="updateToken(editingToken)" class="save-btn">Save</button>
-                  <button @click="cancelEditing" class="cancel-btn">Cancel</button>
-                </td>
-              </template>
-            </tr>
-            <tr v-if="tokens.length === 0">
-              <td colspan="5">No tokens found.</td>
-            </tr>
+          <tr v-for="token in tokens" :key="token.id">
+            <!-- Viewing Mode -->
+            <template v-if="!editingToken || editingToken.id !== token.id">
+              <td data-label="ID">{{ token.id }}</td>
+              <td data-label="Account Name">{{ token.account_name }}</td>
+              <td data-label="Token" class="token-cell" :title="token.token"><span>{{ token.token }}</span></td>
+              <td data-label="Next Execution">{{ new Date(token.next_execution_time).toLocaleString() }}</td>
+              <td class="actions">
+                <button @click="startEditing(token)" class="edit-btn">Edit</button>
+                <button @click="manualSignIn(token.id)" class="signin-btn">Sign-in</button>
+                <button @click="deleteToken(token.id)" class="delete-btn">Delete</button>
+              </td>
+            </template>
+            <!-- Editing Mode -->
+            <template v-else>
+              <td data-label="ID">{{ editingToken.id }}</td>
+              <td data-label="Account Name"><input v-model="editingToken.account_name" /></td>
+              <td data-label="Token"><input v-model="editingToken.token" /></td>
+              <td data-label="Next Execution">{{ new Date(token.next_execution_time).toLocaleString() }}</td>
+              <td class="actions">
+                <button @click="updateToken(editingToken)" class="save-btn">Save</button>
+                <button @click="cancelEditing" class="cancel-btn">Cancel</button>
+              </td>
+            </template>
+          </tr>
+          <tr v-if="tokens.length === 0" class="no-hover">
+            <td colspan="5">No tokens found.</td>
+          </tr>
           </tbody>
         </table>
       </div>
@@ -331,5 +331,104 @@ thead th {
 }
 .signin-btn:hover {
   background-color: #8e44ad;
+}
+
+/* --- Responsive Design for Mobile --- */
+@media (max-width: 768px) {
+  #app {
+    padding: 1rem;
+  }
+
+  .form-container, .table-container {
+    padding: 1.5rem 1rem;
+  }
+
+  h1 {
+    font-size: 1.75rem;
+  }
+
+  h2 {
+    font-size: 1.25rem;
+  }
+
+  /* Responsive Form */
+  .add-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .add-form button {
+    width: 100%;
+  }
+
+  /* Responsive Table to Card List */
+  table {
+    border: 0;
+  }
+
+  thead {
+    /* Hide table header but keep it accessible */
+    border: none;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+  }
+
+  tr {
+    display: block;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-bottom: 1.5rem;
+    background: #fff;
+  }
+  tr.no-hover {
+    box-shadow: none;
+    background: transparent;
+  }
+
+  td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem 1rem;
+    border-bottom: 1px solid #f0f0f0;
+    text-align: right;
+  }
+
+  tr td:last-child {
+    border-bottom: 0;
+  }
+
+  td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #34495e;
+    text-align: left;
+    margin-right: 1rem;
+  }
+
+  td.token-cell {
+    white-space: normal;
+    word-break: break-all;
+  }
+
+  td.actions {
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: stretch;
+  }
+
+  td.actions::before {
+    display: none; /* No label for actions */
+  }
+
+  .actions button {
+    width: 100%;
+    text-align: center;
+  }
 }
 </style>
