@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue';
 const BASE_URL = process.env.NODE_ENV === "development"
     ? `http://127.0.0.1:8787`
-    : `https://evcard-sign-api.humiao2006.workers.dev`;
+    : `https://sign-api.20420501.xyz`;
 console.log("BASE_URL: ", BASE_URL )
 // State
 const tokens = ref([]);
