@@ -20,7 +20,7 @@ const handleLogin = async () => {
   error.value = '';
 
   try {
-    const response = await fetch(`${BASE_URL}/login`, {
+    const response = await fetch(`${BASE_URL}/api/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
